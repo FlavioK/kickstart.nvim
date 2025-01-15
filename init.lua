@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -175,11 +175,13 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+vim.opt.shell = 'zsh'
+
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -605,7 +607,31 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {
+          cmd = { 'clangd', '--header-insertion=never' },
+          filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
+          -- root_dir = { 'src' },
+          root_pattern = {
+            '.clangd',
+            '.clang-tidy',
+            '.clang-format',
+            'compile_commands.json',
+            'compile_flags.txt',
+            'configure.ac',
+            '.git',
+          },
+          single_file_support = true,
+          -- capabilities = {},
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = 'Replace',
+              },
+              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+              -- diagnostics = { disable = { 'missing-fields' } },
+            },
+          },
+        },
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -829,13 +855,14 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    -- 'folke/tokyonight.nvim',
+    'AlexvZyl/nordic.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'nordic'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -921,7 +948,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -929,7 +956,7 @@ require('lazy').setup({
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
